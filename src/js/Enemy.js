@@ -1,7 +1,7 @@
 import Resources from "./resources.js";
 
 /**
- * @description 这是我们的玩家要躲避的敌人
+ * @description 需要躲避的虫子敌人对象
  * @class Enemy
  */
 class Enemy {

@@ -1,5 +1,5 @@
 import Resources from "./resources";
-import { allEnemies } from "./app.js";
+import { allEnemies, player } from "./app.js";
 /* Engine.js
 * 这个文件提供了游戏循环玩耍的功能（更新敌人和渲染）
  * 在屏幕上画出出事的游戏面板，然后调用玩家和敌人对象的 update / render 函数（在 app.js 中定义的）
@@ -68,9 +68,19 @@ export let Engine = function(global) {
    */
   function update(dt) {
     updateEntities(dt);
-    // checkCollisions();
+    checkCollisions();
   }
 
+  function checkCollisions() {
+    for(const enemy of allEnemies) {
+      //简单碰撞检测（enemyActImageWidth+playerActImageWidth）/ 2 = 85
+      if(Math.abs(enemy.posX - player.posX) < 85 && Math.abs(enemy.posY - player.posY) < 75) {
+        reset();
+        break;
+      }
+    }
+    // console.log(`player x:${player.posX}, y:${player.posY}`);
+  }
   /* 这个函数会遍历在 app.js 定义的存放所有敌人实例的数组，并且调用他们的 update()
    * 函数，然后，它会调用玩家对象的 update 方法，最后这个函数被 update 函数调用。
    * 这些更新函数应该只聚焦于更新和对象相关的数据/属性。把重绘的工作交给 render 函数。
@@ -80,7 +90,7 @@ export let Engine = function(global) {
     allEnemies.forEach(function(enemy) {
         enemy.update(dt,maxWidth);
     });
-    // player.update();
+    player.update(maxWidth);
   }
 
   /* 这个函数做了一些游戏的初始渲染，然后调用 renderEntities 函数。记住，这个函数
@@ -125,7 +135,7 @@ export let Engine = function(global) {
     allEnemies.forEach(function(enemy) {
         enemy.render();
     });
-    // player.render();
+    player.render();
   }
 
   /* 这个函数现在没干任何事，但是这会是一个好地方让你来处理游戏重置的逻辑。可能是一个
@@ -133,7 +143,9 @@ export let Engine = function(global) {
    * 函数调用一次。
    */
   function reset() {
-    // 空操作
+    //玩家回归原始坐标
+    player.posX = 202;
+    player.posY = 392;
   }
 
   /* 紧接着我们来加载我们知道的需要来绘制我们游戏关卡的图片。然后把 init 方法设置为回调函数。
