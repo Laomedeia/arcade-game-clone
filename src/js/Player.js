@@ -12,11 +12,11 @@ class Player {
     this.sprite = "src/images/char-boy.png"; //101*171
   }
 
-  update(maxWidth) {
-    if(this.posX > maxWidth) {
-        this.posX = 0;
+  update() {
+    if(this.posX > 404) {
+        this.posX = 404;
     } else if (this.posX < 0) {
-        this.posX = maxWidth;
+        this.posX = 0;
     }
     if(this.posY > 392) {
         this.posY = 392;

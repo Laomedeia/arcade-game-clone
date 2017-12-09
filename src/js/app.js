@@ -1,5 +1,6 @@
 import Enemy from "./Enemy.js";
 import Player from "./Player.js";
+import Prize from "./Prize.js";
 import _ from "lodash";
 
 //虫子大军
@@ -10,7 +11,7 @@ _.times(3, function(n) {
   //赛道1，2，3
   let addY = n * 83;        
   _.times(2, function(n) {
-    let speedX = _.random(100, 300);    
+    let speedX = _.random(20, 200);    
     const enemy = new Enemy(0, 60 + addY, speedX);
     allEnemies.push(enemy);  
   });
@@ -18,6 +19,9 @@ _.times(3, function(n) {
 
 //创建一个玩家
 const player = new Player(202,392);
+
+//设置一个奖品
+const prize = new Prize(_.random(0, 404), _.random(60, 226));
 
 // 监听游戏玩家的键盘点击事件并且代表将按键的关键数字送到 Play.handleInput() 方法里面。
 document.addEventListener("keyup", function(e) {
@@ -30,4 +34,4 @@ document.addEventListener("keyup", function(e) {
   player.handleInput(allowedKeys[e.keyCode]);
 });
 
-export { allEnemies, player };
+export { allEnemies, player, prize };

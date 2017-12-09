@@ -1,5 +1,5 @@
 import Resources from "./resources";
-import { allEnemies, player } from "./app.js";
+import { allEnemies, player, prize } from "./app.js";
 /* Engine.js
 * 这个文件提供了游戏循环玩耍的功能（更新敌人和渲染）
  * 在屏幕上画出出事的游戏面板，然后调用玩家和敌人对象的 update / render 函数（在 app.js 中定义的）
@@ -21,7 +21,8 @@ export let Engine = function(global) {
     win = global.window,
     canvas = doc.createElement("canvas"),
     ctx = canvas.getContext("2d"),
-    lastTime;
+    lastTime,
+    stopAnimation;
 
   canvas.width = 505;
   canvas.height = 606;
@@ -48,7 +49,7 @@ export let Engine = function(global) {
     /* 在浏览准备好调用重绘下一个帧的时候，用浏览器的 requestAnimationFrame 函数
        * 来调用这个函数
        */
-    win.requestAnimationFrame(main);
+    stopAnimation = win.requestAnimationFrame(main);
   }
 
   /* 这个函数调用一些初始化工作，特别是设置游戏必须的 lastTime 变量，这些工作只用
@@ -57,6 +58,7 @@ export let Engine = function(global) {
   function init() {
     console.log("init.....");
     reset();
+    resetPrizePos();
     lastTime = Date.now();
     main();
   }
@@ -69,12 +71,55 @@ export let Engine = function(global) {
   function update(dt) {
     updateEntities(dt);
     checkCollisions();
+    checkVictory();
   }
 
+  /**
+   * @description 检测胜利
+   */
+  function checkVictory() {
+    if (
+      Math.abs(prize.posX - player.posX) < 50 &&
+      Math.abs(prize.posY - player.posY) < 50
+    ) {
+      console.log("You Win!!");
+      stop();      
+      document.querySelector("#notifications").innerHTML = "<span>游戏胜利!</span><br><span style='font-size:6px'>(点击重新开始)<span>";
+      document.querySelector(".container").classList.remove("hideInfo");
+      document.querySelector("#notifications").addEventListener("click",function(){
+        document.querySelector(".container").classList.add("hideInfo");        
+        init();
+      });
+    }
+  }
+
+  /**
+   * @description 停止动画
+   */
+  function stop() {
+    setTimeout(() => {
+      win.cancelAnimationFrame(stopAnimation);
+    }, 0);
+  }
+
+  /**
+   * @description 重置奖品位置
+   */
+  function resetPrizePos() {
+    prize.posX = _.random(0, 404);
+    prize.posY = _.random(60, 226);
+  }
+
+  /**
+   * @description 简单碰撞检测
+   */
   function checkCollisions() {
-    for(const enemy of allEnemies) {
+    for (const enemy of allEnemies) {
       //简单碰撞检测（enemyActImageWidth+playerActImageWidth）/ 2 = 85
-      if(Math.abs(enemy.posX - player.posX) < 85 && Math.abs(enemy.posY - player.posY) < 75) {
+      if (
+        Math.abs(enemy.posX - player.posX) < 85 &&
+        Math.abs(enemy.posY - player.posY) < 75
+      ) {
         reset();
         break;
       }
@@ -88,9 +133,9 @@ export let Engine = function(global) {
   function updateEntities(dt) {
     let maxWidth = canvas.width;
     allEnemies.forEach(function(enemy) {
-        enemy.update(dt,maxWidth);
+      enemy.update(dt, maxWidth);
     });
-    player.update(maxWidth);
+    player.update();
   }
 
   /* 这个函数做了一些游戏的初始渲染，然后调用 renderEntities 函数。记住，这个函数
@@ -133,9 +178,10 @@ export let Engine = function(global) {
   function renderEntities() {
     /* 遍历在 allEnemies 数组中存放的作于对象然后调用你事先定义的 render 函数 */
     allEnemies.forEach(function(enemy) {
-        enemy.render();
+      enemy.render();
     });
     player.render();
+    prize.render();
   }
 
   /* 这个函数现在没干任何事，但是这会是一个好地方让你来处理游戏重置的逻辑。可能是一个
@@ -156,7 +202,8 @@ export let Engine = function(global) {
     "src/images/water-block.png",
     "src/images/grass-block.png",
     "src/images/enemy-bug.png",
-    "src/images/char-boy.png"
+    "src/images/char-boy.png",
+    "src/images/Star.png"
   ]);
   Resources.onReady(init);
 

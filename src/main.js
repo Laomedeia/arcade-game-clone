@@ -1,10 +1,8 @@
-import Resources from "./js/resources.js";
-import Enemy from "./js/Enemy.js";
-import Player from "./js/Player.js";
 import { Engine } from "./js/engine.js";
 import "./css/style.css";
+import "animate.css/animate.min.css";
 
-//console.log(Engine);
+//开始启动游戏
 const MyEngine = Engine(global);
 
 

@@ -1,6 +1,7 @@
 const path = require("path"); // 导入路径包
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 var webpack = require("webpack");
 
 module.exports = {
@@ -25,11 +26,11 @@ module.exports = {
           loader: 'babel-loader'
       },
       {
-        test: /\.(png|jpe?g|gif|ico)(\?\S*)?$/,
-        loader: 'file-loader',
-        query: {
-            name: 'src/images/[name].[ext]'
-        } 
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        loaders: [
+            'file-loader?hash=sha512&digest=hex&name=/src/images/[name].[ext]',
+            'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false'
+        ]
       }
     ]
   },
@@ -37,6 +38,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./index.html"
     }),
+    new CopyWebpackPlugin([
+      { from: 'src/images', to: 'src/images' }
+    ]),
     new webpack.HotModuleReplacementPlugin(),
   ]
 };

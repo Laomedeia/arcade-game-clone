@@ -32,7 +32,7 @@ class Enemy {
     if(this.posX > maxWidth) {
       this.posX = 0;
       //重新随机设置虫子移动速度
-      this.speedX = _.random(100, 300);
+      this.speedX = _.random(20, 200);
     }
     // console.log(dt);
   }
